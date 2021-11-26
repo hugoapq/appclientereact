@@ -14,4 +14,11 @@ export class AlumnoService{
         )
     }
 
+    guardarAlumno(alumno){
+        return axios.post("http://localhost:8080/alumno/guardar",alumno).then(
+            respuesta=>respuesta.data
+        )
+
+    }
+
 }

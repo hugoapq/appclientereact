@@ -7,18 +7,27 @@ import { Column } from 'primereact/column';
 import {Menubar} from 'primereact/menubar';
 import { Dialog } from 'primereact/dialog';
 
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+
 import 'primereact/resources/themes/lara-light-indigo/theme.css'    //theme
 import 'primereact/resources/primereact.min.css'                    //core css
 import 'primeicons/primeicons.css'    
 
 export class Alumno extends Component{
+
     constructor(){
         super()
-        this.state={}
-        this.setState({
-            alumnos:[]
-        })
-
+        this.state={
+            visible: false,
+            alumno: {
+                id: null,
+                apPaterno: null,
+                apMaterno: null,
+                nombres: null
+            }
+        }
+       
         this.elementosmenu=[
             {
                 label: 'Nuevo',
@@ -45,6 +54,17 @@ export class Alumno extends Component{
         ]
 
         this.alumnoService = new AlumnoService()
+
+        this.guardar = this.guardar.bind(this)
+        this.footer=(
+            <div>
+                <Button label="Guardar" 
+                    icon="pi pi-check"
+                    onClick={this.guardar} />
+            </div>
+        )
+
+
     }
 
     componentDidMount(){
@@ -53,11 +73,16 @@ export class Alumno extends Component{
                 console.log(data);
             }*/
             data =>this.setState({alumnos:data})
-        )
+        )       
+    }
 
-        this.setState({
-            visible:false
+    guardar(){
+        console.log("Guardando registro")
+
+        this.alumnoService.guardarAlumno(this.state.alumno).then(data=>{
+            console.log(data)
         })
+
     }
 
     render(){
@@ -75,11 +100,56 @@ export class Alumno extends Component{
 
                 <Dialog header="Crear alumno" visible={this.state.visible} 
                     style={{ width: '50vw' }} modal={true} 
+                    footer={this.footer}
                     onHide={() => this.setState({visible:false})}>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                  
+                    <span className="p-float-label">
+                        <InputText id="paterno" value={this.state.alumno.apPaterno} 
+                            style={{width:'100%'}}
+                        onChange={(e) => {
+                            console.log("paterno....")
+                        let valor=e.target.value                       
+                        this.setState(prevState=>{
+                            let alumno= Object.assign({},prevState.alumno)
+                            alumno.apPaterno= valor
+                            return {alumno};
+                        }
+                        )
+                        }} />
+                        <label htmlFor="paterno">Ap. Paterno</label>
+                    </span>
+                    <br/>    
+                    <span className="p-float-label">
+                        <InputText id="materno" value={this.state.alumno.apMaterno} 
+                            style={{width:'100%'}}
+                        onChange={(e) => {
+                        let valor=e.target.value                       
+                        this.setState(prevState=>{
+                            let alumno= Object.assign({},prevState.alumno)
+                            alumno.apMaterno= valor
+                            return {alumno};
+                        }
+                        )
+                        }} />
+                        <label htmlFor="materno">Ap. Materno</label>
+                    </span>
+                    <br/>    
+                    <span className="p-float-label">
+                        <InputText id="nombres" value={this.state.alumno.nombres} 
+                            style={{width:'100%'}}
+                        onChange={(e) => {
+                        let valor=e.target.value                       
+                        this.setState(prevState=>{
+                            let alumno= Object.assign({},prevState.alumno)
+                            alumno.nombres= valor
+                            return {alumno};
+                        }
+                        )
+                        }} />
+                        <label htmlFor="nombres">Nombres</label>
+                    </span>
+     
+
                 </Dialog>
             </div>
         )
